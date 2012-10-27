@@ -2,11 +2,13 @@
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
-require 'rubygems'
-require 'yaml'
-require 'optparse'
-require 'resque-sliders/kewatcher'
-require 'resque-sliders/version'
+libs = %w(yaml optparse pathname resque-sliders/kewatcher resque-sliders/version)
+begin
+  libs.each { |l| require l }
+rescue LoadError
+  require 'rubygems' # for 1.8.7 and rubygems
+  libs.each { |l| require l }
+end
 
 options = {
   :verbosity => 0,
