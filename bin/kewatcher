@@ -2,7 +2,7 @@
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
-libs = %w(yaml optparse pathname resque-sliders/kewatcher resque-sliders/version)
+libs = %w(yaml optparse resque-sliders/kewatcher resque-sliders/version)
 begin
   libs.each { |l| require l }
 rescue LoadError
@@ -27,11 +27,11 @@ OptionParser.new do |opt|
     options[:config] ||= config
   end
 
-  opt.on("-r", "--rakefile RAKEFILE", Pathname, "Rakefile location") do |rakefile|
+  opt.on("-r", "--rakefile RAKEFILE", "Rakefile location") do |rakefile|
     options[:rakefile] = rakefile
   end
 
-  opt.on("-p", "--pidfile PIDFILE", Pathname, "PID File location") do |pidfile|
+  opt.on("-p", "--pidfile PIDFILE", "PID File location") do |pidfile|
     options[:pidfile] = pidfile
   end
 
