@@ -4,16 +4,19 @@
 dir = File.dirname(File.expand_path(__FILE__))
 $LOAD_PATH.unshift dir + '/../lib'
 $TESTING = true
-require 'test/unit'
-require 'rubygems'
-require 'resque'
+
+libs = %w(test/unit resque resque-sliders/kewatcher)
+begin
+  libs.each { |l| require l }
+rescue LoadError
+  require 'rubygems'
+  libs.each { |l| require l }
+end
 
 begin
   require 'leftright'
 rescue LoadError
 end
-require 'resque'
-require 'resque-sliders/kewatcher'
 
 #
 # make sure we can run redis
