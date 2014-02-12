@@ -37,8 +37,7 @@ module Resque
                 dc.distributed_change(queue, quantity)
               end
             end
-            @sliders = DistributedCommander.new
-            slider_view :queues
+            200
           end
 
           app.get '/sliders/:host' do
