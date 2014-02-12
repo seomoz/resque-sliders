@@ -37,6 +37,7 @@ module Resque
                 dc.distributed_change(queue, quantity)
               end
             end
+            200
           end
 
           app.get '/sliders/:host' do
