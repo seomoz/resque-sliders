@@ -26,6 +26,13 @@ module Resque
           (hosts + stale_hosts).sort
         end
 
+        def hosts_with_current_worker_count
+          all_hosts.inject({}) do |hash, host|
+            hash[host] = current_children(host).to_i
+            hash
+          end
+        end
+
         def hosts_with_available_worker_count
           all_hosts.inject({}) do |hash, host|
             hash[host] = max_children(host).to_i - current_children(host).to_i

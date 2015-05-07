@@ -7,17 +7,17 @@ module Resque
         def distributed_change(queue, count)
           distributed_delete(queue)
 
-          host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| -avail}
+          host_current_workers = hosts_with_current_worker_count.sort_by{|host, current| current}
 
-          average_available = host_available_workers.map{|a| a.last}.reduce(&:+) / host_available_workers.count
+          average_current = host_current_workers.map{|a| a.last}.reduce(&:+) / host_current_workers.count
 
           remaining = count
 
           host_job_mappings = {}
-          host_available_workers.each do |host, avail|
+          host_current_workers.each do |host, current|
             host_job_mappings[host] ||= 0
-            if avail > average_available && remaining > 0
-              num_to_add = avail - average_available.to_i
+            if current < average_current && remaining > 0
+              num_to_add = average_current.to_i - current
               host_job_mappings[host] += num_to_add
               remaining -= num_to_add
             end
@@ -25,7 +25,9 @@ module Resque
 
           if remaining > 0
             remaining.times do |numb|
-              current_host = host_available_workers.rotate!.first.first
+              # this might need to be a min-priority queue where the key of an object is the number of
+              # current workers
+              current_host = host_current_workers.rotate!.first.first
               host_job_mappings[current_host] ||= 0
               host_job_mappings[current_host] += 1
             end
