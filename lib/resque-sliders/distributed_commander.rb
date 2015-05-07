@@ -8,7 +8,7 @@ module Resque
           distributed_delete(queue)
 
           host_job_mappings = {}
-          host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| avail}
+          host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| -avail}
 
           count.times do |numb|
             current_host = host_available_workers.rotate!.first
