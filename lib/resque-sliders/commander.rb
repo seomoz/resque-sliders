@@ -29,6 +29,7 @@ module Resque
         def hosts_with_available_worker_count
           all_hosts.inject({}) do |hash, host|
             hash[host] = max_children(host).to_i - current_children(host).to_i
+            hash
           end.reject{|host, avail| avail <= 0}
         end
 
