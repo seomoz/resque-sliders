@@ -14,7 +14,7 @@ module Resque
 
           remaining = count
 
-          host_available_worker.each do |host, avail|
+          host_available_workers.each do |host, avail|
             host_job_mappings[host] ||= 0
             if avail > average_available && remaining > 0
               num_to_add = average_available.to_i - avail
