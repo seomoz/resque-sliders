@@ -10,7 +10,7 @@ module Resque
           host_job_mappings = {}
           host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| -avail}
 
-          average_available = host_available_workers.values.reduce(&:+)
+          average_available = host_available_workers.map{|a| a.last}.reduce(&:+) / host_available_workers.count
 
           remaining = count.dup
 
