@@ -5,16 +5,17 @@ module Resque
         include Helpers
 
         def distributed_change(queue, count)
+          distributed_delete(queue)
+
           host_job_mappings = {}
-          host_set = all_hosts
+          host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| avail}
 
           count.times do |numb|
-            current_host = host_set.rotate!.first
+            current_host = host_available_workers.rotate!.first
             host_job_mappings[current_host] ||= 0
             host_job_mappings[current_host] += 1
           end
-          
-          distributed_delete(queue)
+
           host_job_mappings.each do |host, job_count|
             change(host, queue, job_count, true)
           end

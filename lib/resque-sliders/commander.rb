@@ -26,6 +26,12 @@ module Resque
           (hosts + stale_hosts).sort
         end
 
+        def hosts_with_available_worker_count
+          all_hosts.inject({}) do |hash, host|
+            hash[host] = max_children(host).to_i - current_children(host).to_i
+          end.reject{|host, avail| avail <= 0}
+        end
+
         # Return current children count or nil if Host hasn't registered itself.
         def current_children(host)
           @host_status["#{host}:current_children"].to_i if max_children(host)
