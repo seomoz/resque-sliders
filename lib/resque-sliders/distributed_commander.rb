@@ -10,10 +10,26 @@ module Resque
           host_job_mappings = {}
           host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| -avail}
 
-          count.times do |numb|
-            current_host = host_available_workers.rotate!.first.first
-            host_job_mappings[current_host] ||= 0
-            host_job_mappings[current_host] += 1
+          average_available = host_available_workers.values.reduce(&:+)
+
+          remaining = count.dup
+
+          host_available_worker.each do |host, avail|
+            host_job_mappings[host] ||= 0
+            if avail > average_available && remaining > 0
+              num_to_add = average_available.to_i - avail
+              host_job_mappings[host] += num_to_add
+              remaining -= num_to_add
+            end
+
+          end
+
+          if remaining > 0
+            remaining.times do |numb|
+              current_host = host_available_workers.rotate!.first.first
+              host_job_mappings[current_host] ||= 0
+              host_job_mappings[current_host] += 1
+            end
           end
 
           host_job_mappings.each do |host, job_count|
