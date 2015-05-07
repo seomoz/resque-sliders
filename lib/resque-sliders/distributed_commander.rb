@@ -5,11 +5,10 @@ module Resque
         include Helpers
 
         def distributed_change(queue, count)
+          distributed_delete(queue)
 
           host_available_workers = hosts_with_available_worker_count.sort_by{|host, avail| -avail}
 
-          distributed_delete(queue)
-          
           average_available = host_available_workers.map{|a| a.last}.reduce(&:+) / host_available_workers.count
 
           remaining = count
