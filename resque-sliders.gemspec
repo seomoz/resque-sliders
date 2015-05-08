@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{Resque-Sliders: a plugin for resque that controls which resque workers are running on each host, from within Resque-web}
 
   s.add_dependency 'resque', ['>= 1.15.0', '< 2.0']
+  s.add_runtime_dependency 'priority_queue', '~> 0.2'
   s.extra_rdoc_files = ["README.md", "MIT-LICENSE"]
 
   s.files         = `git ls-files`.split("\n")

@@ -1,15 +1,25 @@
+require 'priority_queue'
+
 module Resque
   module Plugins
     module ResqueSliders
       class DistributedCommander < Commander
         include Helpers
 
+        # use a min-key priority queue, based on the number of current workers per host, to 
+        # determine allocation of new workers
         def distributed_change(queue, count)
           host_job_mappings = {}
-          host_set = all_hosts
+          host_current_workers = host_current_worker_map
+          pq = PriorityQueue.new
+          host_current_workers.each do |host, current_count|
+            pq[current_count] << host
+          end
 
           count.times do |numb|
-            current_host = host_set.rotate!.first
+            current_host = pq.shift
+            host_current_workers[current_host] += 1
+            pq[host_current_workers[current_host]] << current_host
             host_job_mappings[current_host] ||= 0
             host_job_mappings[current_host] += 1
           end

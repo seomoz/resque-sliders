@@ -31,6 +31,13 @@ module Resque
           @host_status["#{host}:current_children"].to_i if max_children(host)
         end
 
+        def host_current_worker_map
+          all_hosts.inject({}) do |hash, host|
+            hash[host] = current_children(host).to_i
+            hash
+          end
+        end
+
         # Return max children count or nil if Host hasn't registered itself.
         def max_children(host)
           max = @host_status["#{host}:max_children"].to_i
